@@ -1,0 +1,82 @@
+# 6.1.2.1
+```plantuml
+@startuml
+BNNP->PERA: 1:authentication Request
+PERA->PERA: 2:authentication,check cardno and user information 
+BNNP<-PERA: 3:authentication Response
+@end
+```
+
+# 6.1.2.2
+```plantuml
+@startuml
+BNNP->PERA: 1:bind-card Request
+PERA->PERA: 2:bind-card,generate utcd and store bind_serialno+utcd to DataBase
+BNNP<-PERA: 3:bind-card Response
+@end
+```
+
+# 6.2.2
+```plantuml
+@startuml
+user->bnnp: cash in,input amount
+bnnp->pera: "payment after bind"
+pera->pera: query user's information by bind_serialno or utcn.
+pera->pera: QuickPay Validate
+pera->pera: QuickPay Store
+pera->bnnp: OK
+bnnp->user: Cash In Succeeded!
+@end
+```
+
+#  6.7.2
+```plantuml
+@startuml
+group T Day
+user -> user : A. User go to some branch \nand fill paper form
+user -> teller : B. User submit the paper form to Teller, \nand pay cash
+teller -> pera : C. Teller operate in perahub system, \nsubmit the cash in requset
+pera -> bnnp : D. Pera post To BNNP
+bnnp -> bnnp : E. BNNP Credit To User Balance
+bnnp -> pera : F. ok,BNNP have cashed in
+bnnp ---> user : G. SMS or APP msg:\nYour Account Just Cash In 
+pera -> user : H. Teller show the result, \nmay print a receipt paper form
+end
+group T+1 Day
+pera -> bnnp : I. Pera transfer money to \nbnnp's Bank Account
+bnnp -> pera : J. BNNP download file \nthrough sftp, and check .
+end
+@end
+```
+
+# 6.8.2
+```plantuml
+@startuml
+actor user
+actor teller
+actor pera
+actor BNNP
+group T Day
+user -> BNNP:fill E-FORM
+BNNP -> BNNP:generate random code
+BNNP -> user:return random code
+user -> teller: tell mobile-no and show the code
+teller -> pera: input mobile and code,\nquery details
+pera -> BNNP:Query Cash-In E-Form\n[bnnp.702.001.01]
+BNNP -> pera:return details
+pera -> teller:
+teller -> user:
+user -> teller:pay cash
+teller -> pera:submit cash in request
+pera-> BNNP:Cash-In in E-FORM\n[bnnp.701.001.01]
+BNNP ->pera:succeded
+pera->teller
+teller->user
+BNNP --> user:SMS, APP MSG
+end
+group T+1 Day
+pera -> BNNP : I. Pera transfer money to \nbnnp's Bank Account
+BNNP -> pera : J. BNNP download file \nthrough sftp, and check .
+end
+@end
+```
