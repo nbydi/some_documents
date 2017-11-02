@@ -28,3 +28,22 @@ pera->bnnp: OK
 bnnp->user: Cash In Succeeded!
 @end
 ```
+
+#  6.7.2
+```plantuml
+@startuml
+group T Day
+user -> user : fill paper form
+user -> pera : go to some branch, submit the paper form, and pay cash
+pera -> pera : operate in perahub system, commit the cash in requset
+pera -> bnnp : post request data "we have received money from some one, credit to his/her balance account"
+bnnp -> bnnp : check request signature
+bnnp -> pera : ok
+pera -> user : ok
+end
+group T+1 Day
+pera -> bnnp : transfer money to bnnp's Bank Account
+bnnp -> pera : download file through sftp, and check .
+end
+@end
+```
