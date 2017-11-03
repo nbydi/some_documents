@@ -29,16 +29,17 @@ bnnp->user: Cash In Succeeded!
 @end
 ```
 
-#  6.7.2
+#  cash-in paper form
 ```plantuml
 @startuml
+title cash-in paper form
 group T Day
 user -> user : A. User go to some branch \nand fill paper form
 user -> teller : B. User submit the paper form to Teller, \nand pay cash
-teller -> pera : C. Teller operate in perahub system, \nsubmit the cash in requset
+teller -> pera : C. Teller operate in perahub system, \nsubmit the cash in request
 pera -> bnnp : D. Pera post To BNNP
 bnnp -> bnnp : E. BNNP Credit To User Balance
-bnnp -> pera : F. ok,BNNP have cashed in
+bnnp -> pera : F. ok,BNNP have credited
 bnnp ---> user : G. SMS or APP msg:\nYour Account Just Cash In 
 pera -> user : H. Teller show the result, \nmay print a receipt paper form
 end
@@ -49,9 +50,36 @@ end
 @end
 ```
 
-# 6.8.2
+
+#  cash-out paper form
 ```plantuml
 @startuml
+title cash-out paper form
+actor user
+actor teller
+actor pera
+actor bnnp
+group T Day
+user -> user : A. User go to some branch \nand fill paper form
+user -> teller : B. User submit the paper form to Teller
+teller -> pera : C. Teller operate in perahub system, \nsubmit the cash-out request
+pera -> bnnp : D. Pera post To BNNP
+bnnp -> bnnp : E. BNNP debit from user Balance
+bnnp -> pera : F. ok,BNNP have debited
+bnnp ---> user : G. SMS or APP msg:\nYour Account Just Cash Out
+pera -> user : H. Teller show the result, \n pay cash to user \n may print a receipt paper form
+end
+group T+1 Day
+bnnp -> pera : J. BNNP download file \nthrough sftp, and check .
+bnnp -> pera : I. Pera transfer money to \nbnnp's Bank Account
+end
+@end
+```
+
+# Cash-In E-FORM
+```plantuml
+@startuml
+title Cash-In E-FORM
 actor user
 actor teller
 actor pera
@@ -62,7 +90,7 @@ BNNP -> BNNP:generate random code
 BNNP -> user:return random code
 user -> teller: tell mobile-no and show the code
 teller -> pera: input mobile and code,\nquery details
-pera -> BNNP:Query Cash-In E-Form\n[bnnp.702.001.01]
+pera -> BNNP:Query E-Form\n[bnnp.703.001.01]
 BNNP -> pera:return details
 pera -> teller:
 teller -> user:
@@ -78,5 +106,44 @@ group T+1 Day
 pera -> BNNP : I. Pera transfer money to \nbnnp's Bank Account
 BNNP -> pera : J. BNNP download file \nthrough sftp, and check .
 end
+@end
+```
+
+
+# cash-out E-FORM
+```plantuml
+@startuml
+title cash-out E-FORM
+
+actor user
+actor teller
+actor pera
+actor BNNP
+
+group T Day
+user -> BNNP:fill E-FORM
+BNNP -> BNNP:generate random code
+BNNP -> user:return random code
+user -> teller: tell mobile-no and show the code
+teller -> pera: input mobile and code,\nquery details
+pera -> BNNP:Query E-Form\n[bnnp.703.001.01]
+BNNP -> pera:return details
+pera -> teller:show details
+teller -> user:show details,ask user to confirm
+user -> BNNP:input PIN
+BNNP -> user:PIN-TOKEN
+user -> teller:show PIN-TOKEN
+teller -> pera:input PIN-TOKEN and submit cash-out request
+pera-> BNNP:Cash-Out in E-FORM\n[bnnp.702.001.01]
+BNNP ->pera:succeded
+pera->teller:show result
+teller->user:pay cash
+BNNP --> user:SMS, APP MSG
+end
+group T+1 Day
+BNNP -> pera : J. BNNP download file \nthrough sftp, and check .
+BNNP -> pera : I. BNNP transfer money to \n perahub's Bank Account
+end
+
 @end
 ```
