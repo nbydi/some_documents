@@ -1,0 +1,12 @@
++ BNNP向PERA注册Company信息，然后基于现有的QuickPay 接口，作为 银行充值接口。
+	+ 在接口的请求中，加入 bank_id，要求PERAHUB保留，用来做幂等重入，并出现第二天的对账单文件中。
+	+ bank_id 可以作为后续退款的凭据。
+
++ 需要增加退款接口
+	+ 退款请求中，需要加入 原交易中的 sender 信息 ,ori_sender_* .
+	+ 退款请求中，应该bank_refund_id 作为请求的唯一标识。
+	+ 针对同一 bank_id 的退款请求，累计退款金额不能超过 原始金额？
+	+ 手续费怎么算？？
+
++ 付款到银行，相当于 QuickPay的反向操作，从Company 账户中，向指定的receiver的账户中转入信息。
+	+ 请求中应该有bank_id，基于bank_id做幂等重入。
